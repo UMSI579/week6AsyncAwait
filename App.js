@@ -10,17 +10,19 @@ function App1() {
     {text: 'foo', key: 'foo'}, 
     {text: 'too', key: 'too'}]);
 
-  const findRhymes = async () => {
+  const findRhymes = () => {
     const baseURI = 'https://api.datamuse.com/words?rel_rhy=';
     const uri = baseURI + inputText;
-    let response = await fetch(uri); // blocks til fetch() resolves
-    let json = await response.json(); // blocks til response.json() resolves
-    let newRhymes = [];
-    for (let r of json) {
-      let newR = {text: r.word, key: r.word};
-      newRhymes.push(newR);
-    }
-    setRhymes(newRhymes);
+    fetch(uri)
+    .then(response=>response.json())
+    .then(json=>{
+      let newRhymes = [];
+      for (let r of json) {
+        let newR = {text: r.word, key: r.word};
+        newRhymes.push(newR);
+      }
+      setRhymes(newRhymes);
+    });
   }
 
   return (
