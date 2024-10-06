@@ -100,6 +100,56 @@ function App2() {
   );
 }
 
+
+function App3() {
+
+  let [inputText, setInputText] = useState('');
+  let [rhymePhrase, setRhymePhrase] = useState(['hoses', 'star', 'bed']);
+
+  const findRhymes = async (word) => {
+    const baseURI = 'https://api.datamuse.com/words?rel_rhy=';
+    const uri = baseURI + word;
+    let response = await fetch(uri); // blocks til fetch() resolves
+    let json = await response.json(); // blocks til response.json() resolves
+    let newRhymes = [];
+    for (let r of json) {
+      let newR = {text: r.word, key: r.word};
+      newRhymes.push(newR);
+    }
+    return newRhymes;
+  }
+
+  const updateRhymePhrase = async () => {
+    let phrase = inputText;
+    let words = phrase.split(' ');
+    let newPhrase = [];
+    for (let w of words) {
+      let wRhymes = await findRhymes(w);
+      let newRhyme = wRhymes[Math.floor(Math.random() * wRhymes.length)];
+      newPhrase.push(newRhyme.text);
+    }
+    setRhymePhrase(newPhrase);
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={[styles.header, {justifyContent: 'space-between'}]}>
+        <TextInput
+          placeholder='Roses are red'
+          onChangeText={text=>setInputText(text)}
+          value={inputText}
+        />
+        <TouchableOpacity onPress={updateRhymePhrase}>
+          <MaterialIcons name='search' size={24}/>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.body}>
+        <Text>{rhymePhrase.join(' ')}</Text>
+      </View>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -134,4 +184,5 @@ const styles = StyleSheet.create({
 });
 
 //export default App1;
-export default App2;
+//export default App2;
+export default App3;
